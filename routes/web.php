@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('landing');
-});
+
+Route::get('/', 'programController@landing')->name('landing');
 
 Route::resource('detail-user', 'detailController');
 Route::resource('program', 'programController');
 
 Route::get('all-program', 'programController@beranda')->name('all-program.beranda');
 Route::get('chart', 'programController@chart')->name('chart');
-Route::post('updateProgram', 'programController@updateProgram')->name('program.update');
+Route::get('detail-post/{id}', 'programController@detail_post')->name('detail-post');
+Route::delete('delete-program/{program:photo}', 'programController@hapus')->name('hapus');
 
 Auth::routes();
 

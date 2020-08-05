@@ -16,39 +16,57 @@
 <body class="bg-white text-center d-flex h-100">
   <div class="container-fluid d-flex p-3 mx-auto flex-column">
     <header class="mb-auto">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm p-2">
             <div class="container-fluid">
-                <h5 class="text-primary">Coding Test</h5>
+                <a class="nav-link" href="{{ route('landing') }}">
+                <h5 class="text-dark mr-5 mt-1">Coding Test</h5>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
+               
+                <ul class="navbar-nav ml-auto">
+                @guest
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            @if (Route::has('register'))
+                            
+                            @endif
+                        @else
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('detail-user.index') }}">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" href="{{ route('program.index') }}">Gallery</a>
+                            </li>
+                            @endguest
+                </ul>
+                
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                           
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('all-program.beranda') }}">Programme</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('chart') }}">Chart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('program.index') }}">Gallery</a>
-                            </li>
+                            
+                            
                        
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link text-secondary" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link text-primary" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="btn btn-pink mr-2" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -61,12 +79,12 @@
                                     <a class="dropdown-item" href="{{ route('detail-user.index') }}" role="button">
                                         profile <span class="caret"></span>
                                     </a>
+                                    
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
-                                    
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
@@ -86,37 +104,35 @@
     </header>
 
     @foreach ($programs as $program)
-    <div class="container-fluid mt-3 mb-3 shadow p-5">
+    <div class="container-fluid mt-3 mb-3 shadow p-5 fixed">
         <div class="row">
             <div class="col-7">
                 <div class="gambar">
-                <img src="{{ asset('storage/'. $program->photo) }}" class="img" alt="..." width="250">
+                <img src="{{ asset('storage/'. $program->photo) }}" class="img" alt="..." height="200" width="200" style="background-size: cover;">
                 </div>
 
-                <div class="audio mt-3">
-                    <audio controls>
-                        <source src="{{ asset('storage/'. $program->audio) }}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                        </audio>
-                </div>
+                
             </div>
 
             <div class="col-5 text-left">
                 <div class="judul mb-3">
-                    <h5 class="font-weight-bold">{{ $program->title}}</h5>
+                    <h5 class="font-weight-bold pink">{{ $program->title}}</h5>
                 </div>
 
                 <div class="deskripsi mb-4">
                     <p>
-                    {{ $program->description}}
+                    {{ Str::limit($program->description, 210) }}
+                        <a class="ml-3" href="{{ route('detail-post', $program->id)}}">
+                            Show detail
+                        </a>
                     </p>
                 </div>
 
                 <div class="sosmed">
-                <a class="text-secondary" href=""> <i class="fa fa-instagram" style="font-size:24px; aria-hidden="true"></i> </a>
+                <a class="text-dark" href="{{ $program->user->instagram}}"> <i class="fa fa-instagram" style="font-size:24px; aria-hidden="true"></i> </a>
                 
-                <a class="ml-3 text-secondary" href=""><i class="fa fa-facebook" style="font-size:24px; aria-hidden="true"></i></a>
-                <a class="ml-3 text-secondary" href=""><i class="fa fa-twitter" style="font-size:24px; aria-hidden="true"></i></a>
+                <a class="ml-3 text-dark" href="{{ $program->user->facebook}}"><i class="fa fa-facebook" style="font-size:24px; aria-hidden="true"></i></a>
+                <a class="ml-3 text-dark" href="{{ $program->user->twitter}}"><i class="fa fa-twitter" style="font-size:24px; aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
@@ -125,19 +141,23 @@
     
     <div class="container-fluid mt-3 d-flex justify-content-center mb-3">
         <div class="row">
+
             <div class="col">            
-                @foreach ($programs as $program)
-                <div class="card shadow p-2 float-left ml-3" style="width: 500px;">
+                @foreach ($progs as $pro)
+                <div class="card shadow mb-4 p-2 float-left mr-3" style="width: 500px;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-4 text-left">
-                                    <img src="{{ asset('storage/'. $program->photo) }}" class="img" alt="..." width="150">
+                                    <img src="{{ asset('storage/'. $pro->photo) }}" class="img" alt="..." height="155" width="155" style="background-size: cover;">
                                 </div>
 
                                 <div class="col text-left ml-3">
-                                    <h5 class="mb-3 font-weight-bold">{{$program->title}}</h5>
-                                    <p>
-                                    {{ Str::limit($program->description, 90) }}
+                                    <h5 class="mb-3 font-weight-bold pink">{{$pro->title}}</h5>
+                                    <p class="text-justify">
+                                    {{ Str::limit($pro->description, 90) }}
+                                    <a class="" href="{{ route('detail-post', $pro->id)}}">
+                                        Show detail
+                                    </a>
                                     </p>
                                 </div>
                             </div>
@@ -145,8 +165,8 @@
 
                             <div class="row">
                                 <div class="col text-left">
-                                <h5 class="font-weight-bold"><i class="fa fa-play-circle mr-2 text-danger" aria-hidden="true"></i> On Air</h5>
-                                <p> {{$program->start}} - {{$program->end}}</p>
+                                <h6 class="font-weight-bold"><i class="fa fa-play-circle mr-2 text-danger" aria-hidden="true"></i> Categories</h6>
+                                <p> {{$pro->hastag}}  {{$pro->subhastag}}</p>
                                 </div>
                             </div>
                             
@@ -155,9 +175,19 @@
                 @endforeach
 
             </div>
+            
+
+        </div>
+        
+    </div>
+    
+    <div class="container-fluid d-flex justify-content-center">
+    <div class="row">
+        <div class="col-12">
+            {{ $progs->links() }}
         </div>
     </div>
-
+    </div>
     <div class="container-fluid mt-3 bg-light">
         <div class="row">
             <div class="col">
@@ -167,8 +197,7 @@
             </div>
         </div>
     </div>
-    
-
+   
     <!-- You must load 'dark-mode-switch.js' at the foot of the page -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

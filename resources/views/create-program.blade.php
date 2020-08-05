@@ -16,38 +16,57 @@
 <body class="bg-white text-center d-flex">
   <div class="container-fluid d-flex p-3 mx-auto flex-column">
     <header class="mb-auto">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm p-2">
             <div class="container-fluid">
-                <h5 class="text-primary">Coding Test</h5>
+                <a class="nav-link" href="{{ route('landing') }}">
+                <h5 class="text-dark mr-5 mt-1">Coding Test</h5>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
+               
+                <ul class="navbar-nav ml-auto">
+                @guest
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            @if (Route::has('register'))
+                            
+                            @endif
+                        @else
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('detail-user.index') }}">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" href="{{ route('program.index') }}">Gallery</a>
+                            </li>
+                            @endguest
+                </ul>
+                
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                           
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                            <a class="nav-link text-primary" href="{{ route('all-program.beranda') }}">Programme</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('chart') }}">Chart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('program.index') }}">Gallery</a>
-                            </li>
+                            
+                            
+                       
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link text-secondary" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link text-primary" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="btn btn-pink mr-2" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -60,6 +79,7 @@
                                     <a class="dropdown-item" href="{{ route('detail-user.index') }}" role="button">
                                         profile <span class="caret"></span>
                                     </a>
+                                    
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -88,7 +108,7 @@
             <div class="col d-flex justify-content-center">
                 <div class="card rounded w-75">
                     <div class="card-header text-left">
-                        Create New Program
+                        Create New Post
                     </div>
                     <div class="card-body text-left p-4">
                         <form method="POST" action="{{ route('program.store') }}" enctype="multipart/form-data">
@@ -96,34 +116,57 @@
                             <div class="form-group">                          
                                 <input type="hidden" class="form-control" value="{{ Auth::user()->id }}" name="user_id">
                             </div>
-                            <div class="form-group">
-                                <input type="hidden" class="form-control" value="{{ Auth::user()->name }}" name="name">
-                            </div>
+
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1">Title</label>
                                 <input type="text" class="form-control" name="title" placeholder="Title Program">
                             </div>
+                            @error('title')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+
+                            <div class="form-group">
+                                <label for="exampleFormControlSelect1">Category</label>
+                                <select class="form-control" id="" name="category_id">
+                                @foreach ($cats as $cat)
+                                <option value="{{ $cat->id}}">{{ $cat->category}}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                            @error('category_id')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Photo Program</label>
                                 <input type="file" class="form-control" name="photo" placeholder="Enter email">
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Audio Program</label>
-                                <input type="file" class="form-control" name="audio" placeholder="Enter email">
-                            </div>
+                            @error('photo')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1">Description</label>
                                 <textarea class="form-control" name="description" rows="5"></textarea>
                             </div>
+                            @error('description')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                             <div class="form-group">
-                                <label for="exampleInputPassword1">Start Program</label>
-                                <input type="text" class="form-control" name="start" placeholder="Start Program">
+                                <label for="exampleInputPassword1">Hastag</label>
+                                <input type="text" class="form-control" name="hastag" placeholder="Hastag">
                             </div>
+                            @error('hastag')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                             <div class="form-group">
-                                <label for="exampleInputPassword1">End Program</label>
-                                <input type="text" class="form-control" name="end" placeholder="End Program">
+                                <label for="exampleInputPassword1">SubHastag</label>
+                                <input type="text" class="form-control" name="subhastag" placeholder="Subhastag">
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            @error('subhastag')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                            <button type="submit" class="btn btn-pink">Submit</button>
                         </form>
                     </div>
                 </div>

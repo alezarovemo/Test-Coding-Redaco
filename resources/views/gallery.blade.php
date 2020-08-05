@@ -16,39 +16,57 @@
 <body class="bg-white text-center d-flex mb-3">
   <div class="container-fluid d-flex p-3 mx-auto flex-column">
     <header class="mb-auto">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm p-2">
             <div class="container-fluid">
-                <h5 class="text-primary">Coding Test</h5>
+                <a class="nav-link" href="{{ route('landing') }}">
+                <h5 class="text-dark mr-5 mt-1">Coding Test</h5>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
+               
+                <ul class="navbar-nav ml-auto">
+                @guest
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            @if (Route::has('register'))
+                            
+                            @endif
+                        @else
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('detail-user.index') }}">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" href="{{ route('program.index') }}">Gallery</a>
+                            </li>
+                            @endguest
+                </ul>
+                
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                           
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('all-program.beranda') }}">Programme</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('chart') }}">Chart</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('program.index') }}">Gallery</a>
-                            </li>
+                            
+                            
                        
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link text-primary" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link text-secondary" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link text-primary" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="btn btn-pink mr-2" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -61,6 +79,7 @@
                                     <a class="dropdown-item" href="{{ route('detail-user.index') }}" role="button">
                                         profile <span class="caret"></span>
                                     </a>
+                                    
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -87,7 +106,7 @@
     <div class="container-fluid mt-3 p-2">
         <div class="row">
             <div class="col-12">
-            <a class="btn btn-sm btn-dark stretched-link" href="{{ route('program.create') }}"> Add New Program</a>
+            <a class="btn btn-sm btn-dark stretched-link" href="{{ route('program.create') }}"> Add New Post</a>
             </div>
         </div>
     </div>
@@ -95,20 +114,20 @@
     <div class="container-fluid mt-3 d-flex justify-content-center mb-3">
         <div class="row">
             <div class="col">
-            @foreach ($programs as $program)
-            <div class="card shadow p-2 ml-3 mt-3" style="width: 500px;">
+            @forelse ($programs as $program)
+                <div class="card shadow p-2 ml-3 mt-3" style="width: 500px;">
             
                         <div class="card-body">
                             
                             <div class="row">
-                                <div class="col-4 text-left">
-                                    <img src="{{ asset('storage/'. $program->photo) }}" class="img" alt="..." width="150">
+                                <div class="col-5 text-left">
+                                    <img src="{{ asset('storage/'. $program->photo) }}" class="img" alt="..." height="200" width="200" style="background-size: cover;">
                                 </div>
 
-                                <div class="col text-left ml-3">
+                                <div class="col text-left ml-5">
                                     <h5 class="mb-3 font-weight-bold">{{ $program->title}}</h5>
                                     <p>
-                                    {{ Str::limit($program->description, 150) }}
+                                    {{ Str::limit($program->description, 110) }}
                                     </p>
                                 </div>
                             </div>
@@ -116,24 +135,30 @@
 
                             <div class="row">
                                 <div class="col text-left">
-                                <h5 class="font-weight-bold"> <i class="fa fa-play-circle mr-2 text-danger" aria-hidden="true"></i>On Air</h5>
-                                <p> {{ $program->start}} - {{ $program->end}}</p>
+                                <h5 class="font-weight-bold"> <i class="fa fa-play-circle mr-2 text-danger" aria-hidden="true"></i>Hastag</h5>
+                                <p> {{ $program->hastag}} {{ $program->subhastag}}</p>
                                 </div>
                             </div>
 
                             <div class="text-left">
+                            <a class="btn btn-sm btn-outline-success" href="{{ route('program.show', $program->id)}}"><i class="fa fa-pencil"> </i></a>
                                     <form action="{{ route('program.destroy', $program->id) }}" method="post" class="d-inline">
                                             @csrf
                                             @method('delete')
+                                            <input type="hidden" name="photo" value="{{$program->photo}}">
+                                            <input type="hidden" name="id" value="{{ $program->id}}">
                                             <button class="btn btn-sm btn-outline-danger">
                                             <i class="fa fa-trash"> </i>
                                     </form>
                             </div>
                             
+                            
                         </div>
                        
                 </div>
-                @endforeach
+            @empty
+                <d5>Data Masing Kosong</d5>
+            @endforelse
             </div>
         </div>
     </div>

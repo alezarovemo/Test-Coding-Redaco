@@ -10,15 +10,22 @@ class Program extends Model
     use Notifiable;
 
     protected $fillable = [
-        'user_id', 'photo', 'audio', 'description', 'title', 'start', 'end', 'name',
+        'user_id', 'category_id', 'photo', 'description', 'title', 'hastag', 'subhastag'
     ];
 
     protected $hidden = [
         
     ];
+    
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
 }

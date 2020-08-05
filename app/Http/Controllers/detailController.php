@@ -27,7 +27,10 @@ class detailController extends Controller
      */
     public function create()
     {
-        return view('create-detail');
+        $profil = User::get();
+        return view('create-detail')->with([
+            'profil' => $profil
+        ]);
     }
 
     /**
@@ -40,7 +43,7 @@ class detailController extends Controller
     {
         if ($request->user()->photo) {
             Storage::delete($request->user()->photo);
-        }        
+        }
 
         $photo = $request->file('photo')->store('images');
         $bio = $request->bio;

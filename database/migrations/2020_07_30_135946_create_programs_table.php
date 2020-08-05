@@ -15,14 +15,13 @@ class CreateProgramsTable extends Migration
     {
         Schema::create('programs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->string('photo');
-            $table->string('audio');
             $table->longText('description');
             $table->string('title');
-            $table->string('start');
-            $table->string('end');
-            $table->string('name');
+            $table->string('hastag');
+            $table->string('subhastag');
 
             $table->timestamps();
         });

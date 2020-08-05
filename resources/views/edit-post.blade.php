@@ -10,9 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('css/dark-mode.css') }}">
   <link rel="stylesheet" href="{{ asset('css/sisi-kiri.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 
-<body class="bg-white text-center d-flex h-100">
+<body class="bg-white text-center d-flex">
   <div class="container-fluid d-flex p-3 mx-auto flex-column">
     <header class="mb-auto">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm p-2">
@@ -23,18 +24,29 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
+                
+               
                 <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                                <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                @guest
+                            <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
+                            </li>
+                            @if (Route::has('register'))
+                            
+                            @endif
+                        @else
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="{{ route('all-program.beranda') }}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-secondary" href="{{ route('chart') }}">Profile</a>
+                            <a class="nav-link text-secondary" href="{{ route('detail-user.index') }}">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-secondary" href="{{ route('program.index') }}">Gallery</a>
                             </li>
+                            @endguest
                 </ul>
+                
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
@@ -91,76 +103,76 @@
         </nav>
     </header>
 
-    <div class="container-fluid shadow-sm rounded ">
-        <div class="row">
-
-            <div class="col-7">
-                <img src="{{ asset('images/image - white.svg') }}" class="img-fluid" alt="...">
-            </div>
-
-            <div class="col-5">
-                <div class="ml-5 text-left">
-                    <form method="POST" action="{{ route('register') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="name" class="">{{ __('Name') }}</label>
-
-                                <div class="form-group">
-                                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                    @error('name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+    <div class="container-fluid shadow p-3 rounded mt-3 ">
+        <div class="row p-3">
+            <div class="col d-flex justify-content-center">
+                <div class="card rounded w-75">
+                    <div class="card-header text-left">
+                        Edit Post
+                    </div>
+                    <div class="card-body text-left p-4">
+                        <form method="POST" action="{{ route('program.update', $program->id) }}" enctype="multipart/form-data">
+                        @method('PUT')
+                        @csrf
+                            <div class="form-group">                          
+                                <input type="hidden" class="form-control" name="user_id" value="{{ Auth::user()->id }}">
                             </div>
 
                             <div class="form-group">
-                                <label for="email" class="">{{ __('E-Mail Address') }}</label>
-
-                                <div class="form-group">
-                                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                                <label for="exampleFormControlTextarea1">Title</label>
+                                <input type="text" class="form-control" name="title" value="{{ $program->title}}">
                             </div>
+                            @error('title')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
 
                             <div class="form-group">
-                                <label for="password" class="">{{ __('Password') }}</label>
-
-                                <div class="form-group">
-                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                                <label for="exampleFormControlSelect1">Category</label>
+                                <select class="form-control" id="" name="category_id">
+                                @foreach ($cats as $cat)
+                                <option value="{{ $cat->id}}">{{ $cat->category}}</option>
+                                @endforeach
+                                </select>
                             </div>
+                            @error('category_id')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
 
                             <div class="form-group">
-                                <label for="password-confirm" class="">{{ __('Confirm Password') }}</label>
-
-                                <div class="form-group">
-                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                                </div>
+                                <label for="exampleInputEmail1">Photo Program</label>
+                                <input type="file" class="form-control" name="photo" value="{{ $program->photo}}">
+                                <input type="hidden" class="form-control" name="hapus_photo" value="{{ $program->photo}}">
                             </div>
+                            @error('photo')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
 
                             <div class="form-group">
-                                <div class="">
-                                    <button type="submit" class="btn btn-pink form-control">
-                                        {{ __('Register') }}
-                                    </button>
-                                </div>
+                                <label for="exampleFormControlTextarea1">Description</label>
+                                <textarea class="form-control" name="description" rows="5">{{ $program->description}}</textarea>
                             </div>
+                            @error('description')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Hastag</label>
+                                <input type="text" class="form-control" name="hastag" value="{{ $program->hastag}}">
+                            </div>
+                            @error('hastag')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">SubHastag</label>
+                                <input type="text" class="form-control" name="subhastag" value="{{ $program->subhastag}}"">
+                            </div>
+                            @error('subhastag')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                            <button type="submit" class="btn btn-pink">Update</button>
                         </form>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
